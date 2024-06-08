@@ -50,4 +50,5 @@ ax1.set_title("GT")
 
 surf0 = ax0.plot_surface(X, Y, Z, cmap="viridis")
 surf1 = ax1.plot_surface(X, Y, gt, cmap="viridis")
+plt.tight_layout()
 plt.show()
