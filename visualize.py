@@ -12,7 +12,7 @@ from dataset import *
 2. Compare it against the ground truth mapping
 """
 
-net = torch.load("siren_latest.ckpt")  # load the latest model
+net = torch.load("siren_latest-100.ckpt")  # load the latest model
 
 # prepare the input based on [-1, 1] x [-1, 1]
 input = []
