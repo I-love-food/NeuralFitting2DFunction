@@ -23,10 +23,9 @@ for i in np.arange(-half_width, half_width, step):
     for j in np.arange(-half_width, half_width, step):
         input.append([float(i), float(j)])
         gt.append(Dataset.function(i, j))
-
+print(input)
 # evaluate the model
 output = net(torch.tensor(input)).detach().numpy()
-
 # draw the evaluated 2D function
 fig = plt.figure()
 ax0 = fig.add_subplot(121, projection="3d")

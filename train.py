@@ -43,6 +43,7 @@ for i in range(steps):
     loss.backward()
     optimizer.step()
 
+
 print("--------------Training status: OK!--------------")
 print("--------------Validation Result--------------")
 test_output = net(test_set[0])
