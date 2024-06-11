@@ -8,6 +8,7 @@
 5. Find a way to calculate the Gradient (Jacobi matrix), Hessian, like this `d(NN) / d(input)`
 6. Find a lib to do incremental triangulation
 7. Draw the actual integral line path (potential lib: tricontourf, matplotlib can also do a great job) ✔
+8. Do not need test set to validate the model
 
 **Near future:**
 1. Visualize segmentations on the tri mesh, eg. same color for points with same max label
