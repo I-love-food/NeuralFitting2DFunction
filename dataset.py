@@ -37,4 +37,5 @@ class Dataset:
     @staticmethod
     def function(x, y):
         # return x**2 + y**2
+        # ackley, gaussian
         return math.sin(10 * x) + math.cos(10 * y)

@@ -20,15 +20,14 @@ plt.show()
 # how to convert torch.tensor to numpy
 xxx.detach().numpy()
 """
-
 # sample range
 lower_left = [-1, -1]
 upper_right = [1, 1]
 
 # sample resolution
 step = 0.1
-grid_x = (upper_right[0] - lower_left[0]) / step
-grid_y = (upper_right[1] - lower_left[1]) / step
+grid_x = int((upper_right[0] - lower_left[0]) / step)
+grid_y = int((upper_right[1] - lower_left[1]) / step)
 
 samples = []
 for i in np.arange(lower_left[0], upper_right[0], step):
@@ -80,13 +79,9 @@ def get_val(v):
     return eval[0]
 
 
-vis = np.zeros(len(graph))
-
-
-def trace_on_mesh(u, cur_val, path):
-    if vis[u] == 1:
+def trace_on_mesh(prev, u, cur_val, path):
+    if u == prev:
         return
-    vis[u] = 1
     path.append([u, cur_val])
     next_vals = []
     for next_v in graph[u]:
@@ -98,16 +93,16 @@ def trace_on_mesh(u, cur_val, path):
             minv = next_val
             next_node = i
     if minv < cur_val:
-        trace_on_mesh(next_node, next_vals[next_node], path)
+        trace_on_mesh(u, graph[u][next_node], next_vals[next_node], path)
     else:
         # u is a min point
         return
 
 
-start = list(graph.keys())[0]
+start = list(graph.keys())[223]  # choose center point
 path = []
 
-trace_on_mesh(start, get_val(start), path)
+trace_on_mesh(-1, start, get_val(start), path)
 
 # plot function f(x, y) represented by the net based on the mesh
 input = []
@@ -117,9 +112,25 @@ input = np.array(input, dtype=np.float32)
 output = net(torch.tensor(input)).detach().numpy().reshape(grid_x, grid_y)
 X = copy.deepcopy(mesh.x).reshape(grid_x, grid_y)
 Y = copy.deepcopy(mesh.y).reshape(grid_x, grid_y)
-# fig = plt.figure()
-# ax0 = fig.add_subplot(121, projection="3d")
-# surf0 = ax0.plot_surface(mesh.x, mesh.y, , cmap="viridis")
-# surf1 = ax1.plot_surface(X, Y, gt, cmap="viridis")
-# plt.tight_layout()
-# plt.show()
+
+# draw the inplicit surface based on the sampled points
+fig = plt.figure()
+ax0 = fig.add_subplot(111, projection="3d")
+surf0 = ax0.plot_trisurf(
+    X.flatten(), Y.flatten(), output.flatten(), cmap="viridis", alpha=0.3
+)
+
+# draw the trace line--"integral line"
+XL = []
+YL = []
+ZL = []
+for point in path:
+    coord = samples[point[0]]
+    XL.append(coord[0])
+    YL.append(coord[1])
+    ZL.append(get_val(point[0]))
+
+ax0.plot(XL, YL, ZL, color="blue", marker="*", markersize=10)
+
+plt.tight_layout()
+plt.show()
