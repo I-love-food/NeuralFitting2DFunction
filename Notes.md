@@ -1,4 +1,5 @@
 ### Date: 2024.6.10, Monday
+
 **Recent:**
 1. Do not use regular lattice as the sample, try using blue noise, poisson disk to generate random samples
 2. Try some new powerful libraries, like CGAL (C++), scipy-spatial (python) for specific tasks like triangulation
@@ -7,6 +8,7 @@
 5. Find a way to calculate the Gradient (Jacobi matrix), Hessian, like this `d(NN) / d(input)`
 6. Find a lib to do incremental triangulation
 7. Draw the actual integral line path (potential lib: tricontourf, matplotlib can also do a great job) ✔
+
 **Near future:**
 1. Visualize segmentations on the tri mesh, eg. same color for points with same max label
 2. Extend `1.` to min label, min max label
