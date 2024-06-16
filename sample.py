@@ -10,6 +10,7 @@ from dataset import *
 import networkx as nx
 import sys
 import copy
+from sampler import poisson_disk
 
 """
 # show the mesh
@@ -20,21 +21,16 @@ plt.show()
 # how to convert torch.tensor to numpy
 xxx.detach().numpy()
 """
-# sample range
-lower_left = [-1, -1]
-upper_right = [1, 1]
+# freeze the dataset to make debug easier
+if fix_dataset:
+    train_set = Dataset.load_train_set("datasets/" + function_name)
+else:
+    gen = poisson_disk(r=0.05, k=100, span=[[-1, 1], [-1, 1]])
+    train_set = Dataset(gen).get_train_set()
 
-# sample resolution
-step = 0.1
-grid_x = int((upper_right[0] - lower_left[0]) / step)
-grid_y = int((upper_right[1] - lower_left[1]) / step)
+input = train_set[0]
 
-samples = []
-for i in np.arange(lower_left[0], upper_right[0], step):
-    for j in np.arange(lower_left[1], upper_right[1], step):
-        samples.append([i, j])
-samples = np.array(samples, dtype=np.float32)
-mesh = mtri.Triangulation(samples[:, 0], samples[:, 1])
+mesh = mtri.Triangulation(input[:, 0], input[:, 1])
 # convert the triangle mesh to graph
 # Direct Graph? Undirected Graph?
 # How to save the Graph? Matrix? Link-list?
@@ -69,49 +65,65 @@ for t in mesh.triangles:
 # 1. load the model which has been fitted to some f(x, y)
 # 2. choose graph.key[0] as the starting point
 # 3. trace a "streamline" from starting point
-net = torch.load("siren_latest-100.ckpt")  # load the latest model
+net = torch.load(
+    "models\[Ackley]siren_latest-2024-06-16 19-42-44-100.ckpt"
+)  # load the latest model
 
 # I will not use gradient in this function,
 # just compare the function value (forward the net) to determine the next step
 def get_val(v):
-    coord = np.array(samples[v])
+    coord = np.array(input[v])
     eval = net(torch.tensor(coord)).detach().numpy()
     return eval[0]
 
 
-def trace_on_mesh(prev, u, cur_val, path):
-    if u == prev:
-        return
+def trace_on_mesh_recursive(u, path):
+    cur_val = get_val(u)
     path.append([u, cur_val])
-    next_vals = []
-    for next_v in graph[u]:
-        next_vals.append(get_val(next_v))
     next_node = -1
     minv = sys.float_info.max
-    for i, next_val in enumerate(next_vals):
-        if next_val < minv:
-            minv = next_val
+    for i, next_v in enumerate(graph[u]):
+        val = get_val(next_v)
+        if val < minv:
+            minv = val
             next_node = i
     if minv < cur_val:
-        trace_on_mesh(u, graph[u][next_node], next_vals[next_node], path)
+        trace_on_mesh_recursive(graph[u][next_node], path)
     else:
         # u is a min point
         return
 
 
+def trace_on_mesh_iterative(u, path):
+    while True:
+        cur_val = get_val(u)
+        path.append([u, cur_val])
+        minv = sys.float_info.max
+        next_node = -1
+        for i, next_v in enumerate(graph[u]):
+            val = get_val(next_v)
+            if val < minv:
+                minv = val
+                next_node = i
+        if minv < cur_val:
+            u = graph[u][next_node]
+        else:
+            break
+
+
 start = list(graph.keys())[223]  # choose center point
 path = []
 
-trace_on_mesh(-1, start, get_val(start), path)
+trace_on_mesh_iterative(start, path)
 
 # plot function f(x, y) represented by the net based on the mesh
 input = []
 for i in range(len(graph)):
     input.append([mesh.x[i], mesh.y[i]])
 input = np.array(input, dtype=np.float32)
-output = net(torch.tensor(input)).detach().numpy().reshape(grid_x, grid_y)
-X = copy.deepcopy(mesh.x).reshape(grid_x, grid_y)
-Y = copy.deepcopy(mesh.y).reshape(grid_x, grid_y)
+output = net(torch.tensor(input)).detach().numpy()
+X = copy.deepcopy(mesh.x)
+Y = copy.deepcopy(mesh.y)
 
 # draw the inplicit surface based on the sampled points
 fig = plt.figure()
@@ -125,12 +137,12 @@ XL = []
 YL = []
 ZL = []
 for point in path:
-    coord = samples[point[0]]
+    coord = input[point[0]]
     XL.append(coord[0])
     YL.append(coord[1])
-    ZL.append(get_val(point[0]))
+    ZL.append(point[1])
 
-ax0.plot(XL, YL, ZL, color="blue", marker="*", markersize=10)
+ax0.plot(XL, YL, ZL, color="blue", marker="*", markersize=8)
 
 plt.tight_layout()
 plt.show()
