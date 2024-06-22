@@ -45,12 +45,10 @@ Betti number is a good method for categorizing critical points (however, potenti
 
 Fresh my mind -> change the way to determine the critical points (using links and their connected components)
 
-Three term:
-    同胚 (Homeomorphism)
-    
-    同伦 (Homotopy)
-    
-    同调 (Homology)
+Three term: 
+* 同胚 (Homeomorphism)
+* 同伦 (Homotopy)
+* 同调 (Homology)
 
 ### Date: 2024.6.22, Saturday
 I extract the critical points! ✅
