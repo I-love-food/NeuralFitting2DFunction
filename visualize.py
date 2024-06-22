@@ -12,11 +12,9 @@ from sampler import poisson_disk
 1. Visualize the implicit learnt mapping of the network
 2. Compare it against the ground truth mapping
 """
-net = torch.load(
-    "models\[Ackley]siren_latest-2024-06-16 19-42-44-100.ckpt"
-)  # load the latest model
+net = torch.load(f"models\{function_name}-latest.ckpt")  # load the latest model
 if fix_dataset:
-    train_set = Dataset.load_train_set("datasets/" + function_name)
+    train_set = Dataset.load_train_set()
 else:
     gen = poisson_disk(r=0.05, k=100, span=[[-1, 1], [-1, 1]])
     train_set = Dataset(gen).get_train_set()
@@ -32,7 +30,6 @@ ax0 = fig.add_subplot(121, projection="3d")
 ax1 = fig.add_subplot(122, projection="3d")
 
 Z = output.reshape(count)
-print(Z)
 
 ax0.set_xlabel("X")
 ax0.set_ylabel("Y")

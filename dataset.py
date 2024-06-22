@@ -52,13 +52,16 @@ class Dataset:
     def get_train_set(self):
         return self.train_set
 
-    def save_train_set(self, path):
-        np.save(path + "-POINTS.npy", self.train_set[0])
-        np.save(path + "-VALUES.npy", self.train_set[1])
+    def save_train_set(self):
+        np.save(function_name + "-POINTS.npy", self.train_set[0])
+        np.save(function_name + "-VALUES.npy", self.train_set[1])
 
     @staticmethod
-    def load_train_set(path):
-        train_set = [np.load(path + "-POINTS.npy"), np.load(path + "-VALUES.npy")]
+    def load_train_set():
+        train_set = [
+            np.load("datasets/" + function_name + "-POINTS.npy"),
+            np.load("datasets/" + function_name + "-VALUES.npy"),
+        ]
         return train_set
 
     @staticmethod
@@ -67,5 +70,7 @@ class Dataset:
             return ackley_function(x, y, 20, 0.2, 2 * np.pi, 2)
         elif function_name == "[Gaussian]":
             return gaussian_function(x, y, 0, 0, 0.5)
-        else:
+        elif function_name == "[X2Y2]":
             return (x) ** 2 + (y) ** 2
+        else:
+            raise ValueError(f"Function {function_name} is not supported.")

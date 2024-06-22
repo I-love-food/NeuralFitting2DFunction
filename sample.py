@@ -23,7 +23,7 @@ xxx.detach().numpy()
 """
 # freeze the dataset to make debug easier
 if fix_dataset:
-    train_set = Dataset.load_train_set("datasets/" + function_name)
+    train_set = Dataset.load_train_set()
 else:
     gen = poisson_disk(r=0.05, k=100, span=[[-1, 1], [-1, 1]])
     train_set = Dataset(gen).get_train_set()
@@ -65,9 +65,7 @@ for t in mesh.triangles:
 # 1. load the model which has been fitted to some f(x, y)
 # 2. choose graph.key[0] as the starting point
 # 3. trace a "streamline" from starting point
-net = torch.load(
-    "models\[Ackley]siren_latest-2024-06-16 19-42-44-100.ckpt"
-)  # load the latest model
+net = torch.load(f"models\{function_name}-latest.ckpt")  # load the latest model
 
 # I will not use gradient in this function,
 # just compare the function value (forward the net) to determine the next step
@@ -129,7 +127,7 @@ Y = copy.deepcopy(mesh.y)
 fig = plt.figure()
 ax0 = fig.add_subplot(111, projection="3d")
 surf0 = ax0.plot_trisurf(
-    X.flatten(), Y.flatten(), output.flatten(), cmap="viridis", alpha=0.3
+    X.flatten(), Y.flatten(), output.flatten(), cmap="viridis", alpha=0.8
 )
 
 # draw the trace line--"integral line"

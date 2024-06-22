@@ -29,7 +29,7 @@ net = SirenNet(
 
 # create 2d dataset
 if fix_dataset:
-    train_set = Dataset.load_train_set("datasets/" + function_name)
+    train_set = Dataset.load_train_set()
 else:
     gen = poisson_disk(r=0.05, k=100, span=[[-1, 1], [-1, 1]])
     dataset = Dataset(gen=gen)
@@ -55,6 +55,7 @@ print("Dummy test (x, y) = (0, 0): ", net(torch.tensor([[0.0, 0.0]])))
 
 print("---------------SAVING--------------")
 current_time = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-path = f"models/{function_name}siren_latest-{current_time}-{steps}.ckpt"
+# path = f"models/{function_name}siren_latest-{current_time}-{steps}.ckpt"
+path = f"models/{function_name}-latest.ckpt"
 print("Save to: ", path)
 torch.save(net, path)
