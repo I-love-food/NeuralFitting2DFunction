@@ -33,3 +33,19 @@
 # 提取所有的critical point
 # quasi critical point
 ```
+
+### Date: 2024.6.17, Monday
+!Urgent: find critical points
+
+
+### Date: 2024.6.20, Thursday
+I can refer to the book for topology stuff: https://www.maths.ed.ac.uk/~v1ranick/papers/edelcomp.pdf
+Betti number is a good method for categorizing critical points (however, potentially hard for implementation)
+Fresh my mind -> change the way to determine the critical points (using links and their connected components)
+Three term:
+    同胚 (Homeomorphism)
+    同伦 (Homotopy)
+    同调 (Homology)
+
+### Date: 2024.6.22, Saturday
+I extract the critical points! ✅
