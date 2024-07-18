@@ -13,11 +13,7 @@ from sampler import poisson_disk
 2. Compare it against the ground truth mapping
 """
 net = torch.load(f"models\{function_name}-latest.ckpt")  # load the latest model
-if fix_dataset:
-    train_set = Dataset.load_train_set()
-else:
-    gen = poisson_disk(r=0.05, k=100, span=[[-1, 1], [-1, 1]])
-    train_set = Dataset(gen).get_train_set()
+
 
 input = torch.tensor(train_set[0])
 count = len(input)

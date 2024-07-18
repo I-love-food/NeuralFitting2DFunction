@@ -53,7 +53,7 @@ class grid:
 
 
 class poisson_disk:
-    def __init__(self, r=0.1, k=100, span=[[0, 1], [0, 1]]):
+    def __init__(self, r=0.01, k=100, span=[[0, 1], [0, 1]]):
         self.r = r
         self.k = k
         self.two_pi = 2 * np.pi
@@ -146,5 +146,5 @@ class poisson_disk:
             # when there is no activate samples (the samples that can be potentially used to get new samples)
             if len(self.activate) == 0:
                 break
-            result = np.array(self.samples) + self.offsets
+        result = np.array(self.samples) + self.offsets
         return result.astype(np.float32)
